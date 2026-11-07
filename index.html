@@ -63,7 +63,7 @@
         </button>
     </div>
 
-    <!-- Hidden Audio Player using a soothing royalty-free divine flute/temple tone loop -->
+    <!-- Hidden Audio Player -->
     <audio id="divine-audio" loop>
         <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf756.mp3?filename=flute-meditation-ambient-111155.mp3" type="audio/mpeg">
     </audio>
@@ -126,17 +126,16 @@
                 </p>
             </div>
 
-            <!-- 3. ILLUSTRATIONS SECTION (Baby Photo & Cradle) -->
+            <!-- 3. ILLUSTRATIONS SECTION (Provided Baby Photo & Cradle Side-by-Side) -->
             <div class="w-full my-2 bg-black/25 backdrop-blur-sm border border-amber-500/30 rounded-xl p-3 flex flex-col items-center justify-center space-y-3 shadow-inner">
                 
                 <div class="grid grid-cols-2 gap-4 items-center justify-center w-full max-w-sm">
                     
-                    <!-- Left: Provided Baby Photo Integration[span_0](start_span)[span_0](end_span) -->
+                    <!-- Left: Provided Baby Photo Integration -->
                     <div class="flex flex-col items-center">
                         <div class="w-28 h-28 rounded-full overflow-hidden border-2 border-amber-400 shadow-md illustration-glow">
-                            <img src="1000113932.jpg" alt="Baby Photo" class="w-full h-full object-cover" crossorigin="anonymous">
+                            <img src="1000113932_2.jpg" alt="Baby Photo" class="w-full h-full object-cover" crossorigin="anonymous">
                         </div>
-                        <span class="text-[10px] font-cinzel text-amber-300 font-semibold mt-1">Our Little Angel</span>
                     </div>
 
                     <!-- Right: Traditional Wooden Cradle (Thottilu) -->
@@ -150,7 +149,7 @@
                             <rect x="25" y="60" width="70" height="35" rx="8" fill="#ca8a04" stroke="#78350f" stroke-width="2"/>
                             <path d="M27,65 Q60,78 93,65 L93,85 Q60,95 27,85 Z" fill="#dc2626"/>
                             <circle cx="35" cy="62" r="3" fill="#f97316"/><circle cx="45" cy="64" r="3" fill="#eab308"/><circle cx="55" cy="65" r="3" fill="#f97316"/>
-                            <circle cx="65" cy="65" r="3" fill="#eab308"/><circle cx="75" cy="64" r="3" fill="#f97316"/><circle cx="85" cy="62" r="3" fill="#eab308"/>
+                            <circle cx="65" cy="65" r="3" fill="#eab308"/><circle cx="75" cy="64" r="3" fill="#f97316"/><circle cx="85" cy="62" r="3" fill="#f97316"/>
                         </svg>
                         <span class="text-[10px] font-cinzel text-amber-300 font-semibold mt-1">Thottilu Puja</span>
                     </div>
@@ -214,7 +213,6 @@
 
     <!-- Scripts for Image Download & Divine Music Control -->
     <script>
-        // Toggle background divine flute music
         let isPlaying = false;
         function toggleMusic() {
             const audio = document.getElementById('divine-audio');
@@ -243,7 +241,7 @@
         function downloadPNG() {
             const card = document.getElementById('card-container');
             html2canvas(card, {
-                scale: 3, // High DPI resolution for crisp text & graphics
+                scale: 3, 
                 useCORS: true,
                 backgroundColor: null
             }).then(canvas => {
