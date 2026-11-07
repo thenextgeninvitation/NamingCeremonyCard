@@ -6,9 +6,8 @@
     <title>Karnataka Style Namakarana & Thottilu Puja Invitation</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- html2canvas & jsPDF for exporting -->
+    <!-- html2canvas for exporting -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <!-- Google Fonts for Kannada & Luxury Serif Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,17 +51,22 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen py-8 px-4 flex flex-col items-center justify-center font-sans">
 
-    <!-- Top Action Toolbar -->
+    <!-- Top Action Toolbar (PNG Download & Divine Background Music Toggle) -->
     <div class="mb-6 flex flex-wrap gap-4 justify-center items-center">
         <button onclick="downloadPNG()" class="px-6 py-2.5 gold-accent-bg text-slate-950 font-bold rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 text-sm">
             <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-            Download Card (PNG Image)
+            Download Card Image (PNG)
         </button>
-        <button onclick="downloadPDF()" class="px-6 py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 text-sm">
-            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6z"/></svg>
-            Download Printable PDF
+        <button onclick="toggleMusic()" id="music-btn" class="px-6 py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 text-sm">
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+            <span id="music-text">Play Divine Flute Music 🎶</span>
         </button>
     </div>
+
+    <!-- Hidden Audio Player using a soothing royalty-free divine flute/temple tone loop -->
+    <audio id="divine-audio" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf756.mp3?filename=flute-meditation-ambient-111155.mp3" type="audio/mpeg">
+    </audio>
 
     <!-- MAIN INVITATION CARD -->
     <div id="card-container" class="relative w-full max-w-[500px] bg-silk-maroon text-amber-100 p-6 sm:p-8 rounded-2xl shadow-2xl overflow-hidden border-4 border-amber-400/90 gold-inner-border">
@@ -70,251 +74,6 @@
         <!-- SVG Fresh Banana Leaves Frame Overlay Left & Right -->
         <div class="absolute left-0 top-0 bottom-0 w-12 sm:w-16 pointer-events-none z-10 opacity-90">
             <svg viewBox="0 0 100 800" class="w-full h-full" preserveAspectRatio="none">
-                <!-- Banana Leaf Stems & Leaf Detail Left -->
                 <path d="M0,0 Q60,150 10,300 T40,600 T0,800 L0,0 Z" fill="#15803d" opacity="0.95"/>
                 <path d="M0,40 Q80,180 5,340 T50,650 L0,800 Z" fill="#22c55e" opacity="0.85"/>
-                <!-- Leaf ribs -->
-                <path d="M0,50 L40,80 M0,120 L50,160 M0,200 L45,240 M0,320 L55,360 M0,420 L45,460 M0,520 L50,560 M0,640 L40,680" stroke="#86efac" stroke-width="2" opacity="0.6"/>
-            </svg>
-        </div>
-        <div class="absolute right-0 top-0 bottom-0 w-12 sm:w-16 pointer-events-none z-10 opacity-90 transform scale-x-[-1]">
-            <svg viewBox="0 0 100 800" class="w-full h-full" preserveAspectRatio="none">
-                <path d="M0,0 Q60,150 10,300 T40,600 T0,800 L0,0 Z" fill="#15803d" opacity="0.95"/>
-                <path d="M0,40 Q80,180 5,340 T50,650 L0,800 Z" fill="#22c55e" opacity="0.85"/>
-                <path d="M0,50 L40,80 M0,120 L50,160 M0,200 L45,240 M0,320 L55,360 M0,420 L45,460 M0,520 L50,560 M0,640 L40,680" stroke="#86efac" stroke-width="2" opacity="0.6"/>
-            </svg>
-        </div>
-
-        <!-- Four Corner Gold Decorative Motifs -->
-        <div class="absolute top-3 left-3 text-amber-300 text-xl z-20">⚜️</div>
-        <div class="absolute top-3 right-3 text-amber-300 text-xl z-20">⚜️</div>
-        <div class="absolute bottom-3 left-3 text-amber-300 text-xl z-20">⚜️</div>
-        <div class="absolute bottom-3 right-3 text-amber-300 text-xl z-20">⚜️</div>
-
-        <!-- CARD CONTENT AREA -->
-        <div class="relative z-20 flex flex-col items-center text-center space-y-4">
-            
-            <!-- 1. Top Invocation -->
-            <div class="space-y-1">
-                <!-- Kalash / Mango Leaf Icon SVG -->
-                <div class="flex justify-center mb-1">
-                    <svg class="w-10 h-10 illustration-glow" viewBox="0 0 100 100">
-                        <!-- Pot/Kalasha -->
-                        <path d="M30,60 C30,45 40,40 50,40 C60,40 70,45 70,60 C70,75 60,85 50,85 C40,85 30,75 30,60 Z" fill="#eab308" stroke="#ca8a04" stroke-width="3"/>
-                        <!-- Coconut -->
-                        <path d="M38,40 Q50,15 62,40 Z" fill="#78350f"/>
-                        <!-- Mango Leaves -->
-                        <path d="M50,40 Q30,25 20,35 Q35,45 50,40 Z" fill="#16a34a"/>
-                        <path d="M50,40 Q70,25 80,35 Q65,45 50,40 Z" fill="#16a34a"/>
-                        <path d="M50,40 Q50,15 50,20 Q50,30 50,40 Z" fill="#22c55e"/>
-                    </svg>
-                </div>
-                <h1 class="font-kannada text-2xl sm:text-3xl font-extrabold text-amber-300 drop-shadow">
-                    🌸 ಶ್ರೀ ಗಣೇಶಾಯ ನಮಃ 🌸
-                </h1>
-                <p class="font-cinzel text-xs text-amber-200/90 tracking-widest font-semibold uppercase">
-                    || Shri Ganeshay Namah ||
-                </p>
-                <div class="w-32 h-0.5 gold-accent-bg mx-auto rounded-full mt-2"></div>
-            </div>
-
-            <!-- 2. Headline & Main Invitation Phrasing -->
-            <div class="space-y-2 px-4">
-                <h2 class="font-cinzel text-xl sm:text-2xl font-bold gold-gradient-text tracking-wide leading-tight">
-                    Namakarana & Thottilu Puja
-                </h2>
-                <p class="font-serif-title text-xs sm:text-sm text-amber-100/90 italic leading-relaxed">
-                    "With the divine blessings of Almighty & our elders, we cordially invite you to grace the auspicious Naming & Cradle Ceremony of our beloved baby girl."
-                </p>
-            </div>
-
-            <!-- 3. ILLUSTRATIONS SECTION (Parents, Crawling Baby, & Cradle) -->
-            <div class="w-full my-2 bg-black/25 backdrop-blur-sm border border-amber-500/30 rounded-xl p-3 flex flex-col items-center justify-center space-y-3 shadow-inner">
-                
-                <div class="grid grid-cols-3 gap-2 items-center w-full max-w-sm">
-                    
-                    <!-- Left: Traditional Karnataka Parents Illustration -->
-                    <div class="flex flex-col items-center">
-                        <svg class="w-20 h-24 illustration-glow" viewBox="0 0 120 150">
-                            <!-- Father in Silk Dhoti & Kurta -->
-                            <g transform="translate(15, 20)">
-                                <!-- Body/Kurta (Cream Silk with Gold Border) -->
-                                <path d="M10,45 L35,45 L40,90 L5,90 Z" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5"/>
-                                <path d="M22,45 L22,90" stroke="#ca8a04" stroke-width="2"/>
-                                <!-- Angavastram over shoulder -->
-                                <path d="M8,45 Q20,65 38,55 L35,45 Z" fill="#b91c1c"/>
-                                <!-- Head/Face -->
-                                <circle cx="22.5" cy="28" r="13" fill="#fbcfe8"/>
-                                <!-- Hair -->
-                                <path d="M10,25 C10,15 35,15 35,25 C35,20 10,20 10,25 Z" fill="#1e293b"/>
-                                <!-- Tilak/Chandan on forehead -->
-                                <line x1="22.5" y1="22" x2="22.5" y2="28" stroke="#b91c1c" stroke-width="2"/>
-                                <line x1="18.5" y1="24" x2="26.5" y2="24" stroke="#fef08a" stroke-width="1.5"/>
-                            </g>
-
-                            <!-- Mother in Kanjeevaram Saree & Jasmine Gajra -->
-                            <g transform="translate(55, 15)">
-                                <!-- Saree Body (Rich Green/Red Zari) -->
-                                <path d="M10,50 L38,50 L45,95 L5,95 Z" fill="#047857" stroke="#fbbf24" stroke-width="2"/>
-                                <!-- Saree Pallu (Gold Zari) -->
-                                <path d="M12,50 Q30,70 42,60 L38,50 Z" fill="#d97706"/>
-                                <!-- Head/Face -->
-                                <circle cx="24" cy="30" r="12" fill="#fbcfe8"/>
-                                <!-- Hair Bun with Gajra (Jasmine Flowers) -->
-                                <circle cx="36" cy="30" r="8" fill="#1e293b"/>
-                                <circle cx="38" cy="25" r="3" fill="#ffffff"/>
-                                <circle cx="41" cy="30" r="3" fill="#ffffff"/>
-                                <circle cx="38" cy="35" r="3" fill="#ffffff"/>
-                                <!-- Bindi -->
-                                <circle cx="20" cy="28" r="1.8" fill="#b91c1c"/>
-                                <!-- Earrings (Jhumka) -->
-                                <circle cx="26" cy="35" r="2.5" fill="#f59e0b"/>
-                            </g>
-                        </svg>
-                        <span class="text-[10px] font-cinzel text-amber-300 font-semibold mt-1">Sowmya & Raghavendra</span>
-                    </div>
-
-                    <!-- Center: Traditional Wooden Cradle (Thottilu) -->
-                    <div class="flex flex-col items-center">
-                        <svg class="w-20 h-24 illustration-glow" viewBox="0 0 120 140">
-                            <!-- Stand Structure -->
-                            <path d="M20,110 L35,30 L85,30 L100,110" stroke="#b45309" stroke-width="4" fill="none" stroke-linecap="round"/>
-                            <line x1="15" y1="110" x2="40" y2="110" stroke="#78350f" stroke-width="4" stroke-linecap="round"/>
-                            <line x1="80" y1="110" x2="105" y2="110" stroke="#78350f" stroke-width="4" stroke-linecap="round"/>
-                            <!-- Hanging Chains -->
-                            <line x1="40" y1="30" x2="35" y2="60" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,2"/>
-                            <line x1="80" y1="30" x2="85" y2="60" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,2"/>
-                            <!-- Cradle Bed (Thottilu) -->
-                            <rect x="25" y="60" width="70" height="35" rx="8" fill="#ca8a04" stroke="#78350f" stroke-width="2"/>
-                            <!-- Silk Cloth bedding -->
-                            <path d="M27,65 Q60,78 93,65 L93,85 Q60,95 27,85 Z" fill="#dc2626"/>
-                            <!-- Marigold Garland on Cradle -->
-                            <circle cx="35" cy="62" r="3" fill="#f97316"/><circle cx="45" cy="64" r="3" fill="#eab308"/><circle cx="55" cy="65" r="3" fill="#f97316"/>
-                            <circle cx="65" cy="65" r="3" fill="#eab308"/><circle cx="75" cy="64" r="3" fill="#f97316"/><circle cx="85" cy="62" r="3" fill="#eab308"/>
-                        </svg>
-                        <span class="text-[10px] font-cinzel text-amber-300 font-semibold mt-1">Thottilu Puja</span>
-                    </div>
-
-                    <!-- Right: Cute Crawling Baby Illustration -->
-                    <div class="flex flex-col items-center">
-                        <svg class="w-20 h-24 illustration-glow" viewBox="0 0 120 140">
-                            <!-- Crawling Baby Body -->
-                            <g transform="translate(10, 25)">
-                                <!-- Baby Torso/Diaper/Loincloth -->
-                                <ellipse cx="50" cy="60" rx="22" ry="16" fill="#fbcfe8"/>
-                                <path d="M38,52 Q50,75 62,52 Z" fill="#ffffff" stroke="#f472b6"/>
-                                <!-- Baby Head -->
-                                <circle cx="32" cy="38" r="16" fill="#fbcfe8"/>
-                                <!-- Kaajal Bindi Dot on forehead -->
-                                <circle cx="26" cy="32" r="2" fill="#09090b"/>
-                                <!-- Cute Eye & Smile -->
-                                <circle cx="25" cy="38" r="1.5" fill="#000000"/>
-                                <path d="M26,43 Q30,47 34,42" stroke="#000000" stroke-width="1.2" fill="none"/>
-                                <!-- Little Hair Lock/Tuft -->
-                                <path d="M32,22 Q30,16 34,18" stroke="#1e293b" stroke-width="2" fill="none"/>
-                                <!-- Crawling Arms -->
-                                <path d="M38,48 L28,70" stroke="#fbcfe8" stroke-width="8" stroke-linecap="round"/>
-                                <path d="M44,48 L48,72" stroke="#fbcfe8" stroke-width="8" stroke-linecap="round"/>
-                                <!-- Crawling Legs with Anklets (Valaya) -->
-                                <path d="M60,60 L78,72" stroke="#fbcfe8" stroke-width="9" stroke-linecap="round"/>
-                                <!-- Silver Anklet (Gejje) -->
-                                <circle cx="74" cy="70" r="3" fill="none" stroke="#e2e8f0" stroke-width="2"/>
-                                <circle cx="28" cy="68" r="3" fill="none" stroke="#e2e8f0" stroke-width="2"/>
-                            </g>
-                        </svg>
-                        <span class="text-[10px] font-cinzel text-amber-300 font-semibold mt-1">Baby Angel</span>
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- 4. Grandparents Info -->
-            <div class="text-xs text-amber-100/90 font-serif-title italic">
-                Granddaughter of:<br>
-                <span class="font-semibold text-amber-200">Smt. & Sri Subba Rao</span> &nbsp;|&nbsp; <span class="font-semibold text-amber-200">Smt. & Sri Sharadamma</span>
-            </div>
-
-            <!-- 5. Event Logistics Box -->
-            <div class="w-full bg-amber-950/40 border border-amber-500/40 rounded-xl p-3.5 space-y-2">
-                <div class="grid grid-cols-2 gap-2 text-center divide-x divide-amber-500/30">
-                    <div class="px-2">
-                        <span class="block text-[10px] font-cinzel font-bold text-amber-400 uppercase tracking-widest">Date</span>
-                        <span class="text-xs sm:text-sm font-bold text-amber-100">Sunday, 13th Dec 2026</span>
-                    </div>
-                    <div class="px-2">
-                        <span class="block text-[10px] font-cinzel font-bold text-amber-400 uppercase tracking-widest">Muhurtha</span>
-                        <span class="text-xs sm:text-sm font-bold text-amber-100">10:30 AM (Hora)</span>
-                    </div>
-                </div>
-                <div class="border-t border-amber-500/30 pt-2 text-center">
-                    <p class="text-xs text-amber-300 font-semibold">
-                        🍌 Traditional Kannada Feast (Oota): <span class="text-amber-100">1:00 PM Onwards</span>
-                    </p>
-                </div>
-            </div>
-
-            <!-- 6. Venue -->
-            <div class="space-y-1 px-2">
-                <span class="text-[10px] font-cinzel font-bold text-amber-400 uppercase tracking-widest block">📍 Auspicious Venue</span>
-                <p class="text-xs sm:text-sm font-semibold text-amber-100 leading-snug">
-                    Sri Rama Mandira Sabha Bhavana
-                </p>
-                <p class="text-[11px] text-amber-200/80 leading-normal">
-                    Near Raghavendra Swamy Mutt, 4th Block, Jayanagar, Bengaluru - 560011
-                </p>
-            </div>
-
-            <!-- 7. Traditional Quote & RSVP -->
-            <div class="w-full border-t border-amber-500/30 pt-3 space-y-1.5">
-                <p class="font-kannada text-xs sm:text-sm text-amber-200 font-bold italic">
-                    “ಮನೆಯ ಬೆಳಕು, ನಮ್ಮ ಪ್ರೀತಿಯ ಮಗಳು”
-                </p>
-                <p class="font-serif-title text-[11px] text-amber-100/80 italic">
-                    A tiny hand to hold, a lifetime of love to unfold.
-                </p>
-                <div class="pt-2 text-[10px] font-cinzel font-bold text-amber-300 uppercase tracking-wider">
-                    Warmly Awaited By: Raghavendra & Family <br>
-                    <span class="text-amber-200">📞 Ph: +91 8095117035</span>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- Export Scripts -->
-    <script>
-        // Export to High-Resolution PNG Image
-        function downloadPNG() {
-            const card = document.getElementById('card-container');
-            html2canvas(card, {
-                scale: 3, // High DPI resolution for crisp text & graphics
-                useCORS: true,
-                backgroundColor: null
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'Karnataka-Namakarana-Invitation.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            });
-        }
-
-        // Export to Printable PDF
-        function downloadPDF() {
-            const { jsPDF } = window.jspdf;
-            const card = document.getElementById('card-container');
-
-            html2canvas(card, { scale: 3, useCORS: true }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF('p', 'mm', 'a5');
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = pdf.internal.pageSize.getHeight();
-                
-                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                pdf.save('Karnataka-Namakarana-Invitation.pdf');
-            });
-        }
-    </script>
-</body>
-</html>
-
+                <path d="M0,50 L40,80 M0,120 L50,160 M0,200 L45,240 M0,32
