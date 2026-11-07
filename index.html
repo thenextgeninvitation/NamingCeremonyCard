@@ -1,852 +1,332 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Namakarana Digital Invitation | Thottilu Shastra</title>
+    <title>Karnataka Style Namakarana Invitation Card Generator</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Cormorant Garamond for regal headings, Plus Jakarta Sans for clean body text -->
+    <!-- html2canvas & jsPDF for exporting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Google Fonts for Traditional Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Tone.js for gentle temple bell / chime sound synthesis -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Noto+Sans+Kannada:wght@400;600;700&family=Great+Vibes&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-primary: #FDFBF7;
-            --bg-secondary: #F6EFE2;
-            --bg-card: rgba(255, 253, 248, 0.92);
-            --text-primary: #3D1A1A;
-            --text-secondary: #6E473B;
-            --accent-maroon: #7A1C1C;
-            --accent-gold: #D4AF37;
-            --accent-gold-light: #F3E5AB;
-            --accent-marigold: #F59E0B;
-        }
-
-        [data-theme="lotus"] {
-            --bg-primary: #FFF9FB;
-            --bg-secondary: #FCEEF3;
-            --bg-card: rgba(255, 252, 253, 0.94);
-            --text-primary: #4A1525;
-            --text-secondary: #7C3F54;
-            --accent-maroon: #9D2B4B;
-            --accent-gold: #D49B37;
-            --accent-gold-light: #F9E6C7;
-            --accent-marigold: #EC4899;
-        }
-
-        [data-theme="celestial"] {
-            --bg-primary: #0B132B;
-            --bg-secondary: #152244;
-            --bg-card: rgba(22, 35, 68, 0.92);
-            --text-primary: #FBF6E9;
-            --text-secondary: #CBD5E1;
-            --accent-maroon: #E2B857;
-            --accent-gold: #F0C451;
-            --accent-gold-light: #3B4E7C;
-            --accent-marigold: #F59E0B;
-        }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            transition: background-color 0.4s ease, color 0.4s ease;
-            overflow-x: hidden;
-        }
-
-        .font-serif-regal {
-            font-family: 'Cormorant Garamond', serif;
-        }
-
-        /* Zari Woven Border Pattern */
-        .zari-border {
-            border: 2px solid var(--accent-gold);
-            box-shadow: inset 0 0 0 4px var(--bg-primary), inset 0 0 0 5px var(--accent-gold);
-        }
-
-        .zari-side-border {
-            background-image: repeating-linear-gradient(
-                45deg,
-                var(--accent-gold) 0px,
-                var(--accent-gold) 2px,
-                transparent 2px,
-                transparent 8px
-            );
-        }
-
-        /* Cradle Swing Animation */
-        @keyframes gentleSwing {
-            0%, 100% { transform: rotate(-2.5deg); }
-            50% { transform: rotate(2.5deg); }
-        }
-
-        @keyframes activeRock {
-            0% { transform: rotate(0deg); }
-            20% { transform: rotate(9deg); }
-            40% { transform: rotate(-8deg); }
-            60% { transform: rotate(6deg); }
-            80% { transform: rotate(-4deg); }
-            100% { transform: rotate(0deg); }
-        }
-
-        .cradle-pivot {
-            transform-origin: 200px 25px;
-            animation: gentleSwing 4.5s ease-in-out infinite;
-        }
-
-        .cradle-rocking {
-            animation: activeRock 2.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards !important;
-        }
-
-        /* Toran Sway Animation */
-        @keyframes toranSway {
-            0%, 100% { transform: rotate(-1.5deg); }
-            50% { transform: rotate(1.5deg); }
-        }
-        .toran-tassel {
-            transform-origin: top center;
-            animation: toranSway 3.5s ease-in-out infinite;
-        }
-
-        /* Shimmering Gold Text */
-        .gold-gradient-text {
-            background: linear-gradient(135deg, #B8860B 0%, #D4AF37 35%, #AA771C 70%, #FDF0A6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        [data-theme="celestial"] .gold-gradient-text {
-            background: linear-gradient(135deg, #FDE68A 0%, #F59E0B 50%, #FEF3C7 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        .font-kannada { font-family: 'Noto Sans Kannada', sans-serif; }
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        .font-serif-title { font-family: 'Playfair Display', serif; }
+        .font-script { font-family: 'Great Vibes', cursive; }
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: var(--bg-primary);
+            background: #f1f1f1;
         }
         ::-webkit-scrollbar-thumb {
-            background: var(--accent-gold);
-            border-radius: 3px;
+            background: #b91c1c;
+            border-radius: 4px;
         }
 
-        /* Floating Diya Flame */
-        @keyframes flameFlicker {
-            0%, 100% { transform: scaleY(1) rotate(-1deg); opacity: 0.95; }
-            50% { transform: scaleY(1.12) rotate(1deg); opacity: 1; }
+        /* Traditional Pattern Overlay */
+        .bg-pattern {
+            background-color: #5c0612;
+            background-image: radial-gradient(#d4af37 0.75px, transparent 0.75px), radial-gradient(#d4af37 0.75px, #5c0612 0.75px);
+            background-size: 30px 30px;
+            background-position: 0 0,15px 15px;
+            opacity: 0.98;
         }
-        .flame-flicker {
-            transform-origin: bottom center;
-            animation: flameFlicker 1.2s ease-in-out infinite;
+
+        .gold-border {
+            border: 3px solid #d4af37;
+            outline: 2px solid #5c0612;
+            outline-offset: -8px;
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-accent-bg {
+            background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 30%, #b38728 70%, #aa771c 100%);
         }
     </style>
 </head>
-<body class="relative min-h-screen selection:bg-amber-200 selection:text-red-950">
-
-    <!-- Floating Flower Petals Canvas Overlay -->
-    <canvas id="petalCanvas" class="fixed inset-0 pointer-events-none z-30"></canvas>
-
-    <!-- Top Traditional Mango Leaf & Marigold Toran SVG -->
-    <div class="sticky top-0 left-0 right-0 z-20 pointer-events-none overflow-hidden h-16 sm:h-20">
-        <svg viewBox="0 0 1200 90" preserveAspectRatio="none" class="w-full h-full drop-shadow-md">
-            <defs>
-                <!-- Mango Leaf Gradient -->
-                <linearGradient id="mangoLeaf" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#15803D" />
-                    <stop offset="100%" stop-color="#14532D" />
-                </linearGradient>
-                <!-- Marigold Gradient -->
-                <radialGradient id="marigoldOrange" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stop-color="#FDE047" />
-                    <stop offset="60%" stop-color="#F97316" />
-                    <stop offset="100%" stop-color="#C2410C" />
-                </radialGradient>
-                <radialGradient id="marigoldYellow" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stop-color="#FEF9C3" />
-                    <stop offset="70%" stop-color="#EAB308" />
-                    <stop offset="100%" stop-color="#CA8A04" />
-                </radialGradient>
-                <!-- Single Toran Segment -->
-                <g id="toranSegment">
-                    <!-- Mango Leaves -->
-                    <path d="M15,0 Q5,35 15,62 Q25,35 15,0 Z" fill="url(#mangoLeaf)" stroke="#854D0E" stroke-width="0.5"/>
-                    <path d="M45,0 Q35,38 45,66 Q55,38 45,0 Z" fill="url(#mangoLeaf)" stroke="#854D0E" stroke-width="0.5"/>
-                    <path d="M75,0 Q65,35 75,62 Q85,35 75,0 Z" fill="url(#mangoLeaf)" stroke="#854D0E" stroke-width="0.5"/>
-                    <path d="M105,0 Q95,38 105,66 Q115,38 105,0 Z" fill="url(#mangoLeaf)" stroke="#854D0E" stroke-width="0.5"/>
-                    <!-- Marigold Swag -->
-                    <path d="M0,8 Q60,55 120,8" fill="none" stroke="#D97706" stroke-width="6" stroke-dasharray="1 10" stroke-linecap="round"/>
-                    <!-- Top Marigold Row -->
-                    <circle cx="15" cy="10" r="9" fill="url(#marigoldOrange)"/>
-                    <circle cx="35" cy="12" r="8" fill="url(#marigoldYellow)"/>
-                    <circle cx="60" cy="14" r="10" fill="url(#marigoldOrange)"/>
-                    <circle cx="85" cy="12" r="8" fill="url(#marigoldYellow)"/>
-                    <circle cx="105" cy="10" r="9" fill="url(#marigoldOrange)"/>
-                    <!-- Hanging Bell & Jasmine String -->
-                    <g class="toran-tassel">
-                        <line x1="60" y1="22" x2="60" y2="68" stroke="#FEF08A" stroke-width="2" stroke-dasharray="3 3"/>
-                        <circle cx="60" cy="50" r="5" fill="url(#marigoldOrange)"/>
-                        <path d="M54,74 L66,74 L63,64 L57,64 Z" fill="#D4AF37"/>
-                        <circle cx="60" cy="76" r="2" fill="#B45309"/>
-                    </g>
-                </g>
-            </defs>
-            <!-- Top Golden Rod -->
-            <rect x="0" y="0" width="1200" height="8" fill="#D4AF37"/>
-            <use href="#toranSegment" x="0" y="0"/>
-            <use href="#toranSegment" x="120" y="0"/>
-            <use href="#toranSegment" x="240" y="0"/>
-            <use href="#toranSegment" x="360" y="0"/>
-            <use href="#toranSegment" x="480" y="0"/>
-            <use href="#toranSegment" x="600" y="0"/>
-            <use href="#toranSegment" x="720" y="0"/>
-            <use href="#toranSegment" x="840" y="0"/>
-            <use href="#toranSegment" x="960" y="0"/>
-            <use href="#toranSegment" x="1080" y="0"/>
-        </svg>
-    </div>
-
-    <!-- Floating Action Control (Audio Chime Toggle Only) -->
-    <div class="fixed top-20 right-3 sm:right-6 z-40 flex flex-col gap-2.5">
-        <!-- Sound Toggle Button -->
-        <button id="soundToggleBtn" aria-label="Toggle Temple Chimes" class="flex items-center justify-center w-10 h-10 self-end rounded-full shadow-md border border-amber-500/50 bg-amber-50/90 text-amber-900 hover:bg-amber-100 transition-all" title="Toggle Auspicious Chimes">
-            <svg id="soundOnIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
-            </svg>
-            <svg id="soundOffIcon" class="w-5 h-5 hidden text-red-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zM17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/>
-            </svg>
-        </button>
-    </div>
-
-    <!-- Main Container Card -->
-    <main class="max-w-3xl mx-auto px-3 sm:px-6 pt-2 pb-16 relative z-10">
-        <div class="zari-border rounded-3xl p-5 sm:p-10 shadow-2xl backdrop-blur-md transition-colors duration-500" style="background-color: var(--bg-card);">
-            
-            <!-- Auspicious Header Invocation -->
-            <header class="text-center space-y-2 mb-6">
-                <div class="inline-flex items-center gap-3 px-4 py-1 rounded-full border border-amber-500/40 bg-amber-500/10 text-xs sm:text-sm tracking-widest uppercase font-medium" style="color: var(--accent-maroon);">
-                    <span>॥ श्री गणेशाय नमः ॥</span>
-                    <span>•</span>
-                    <span>Shubha Namakarana</span>
-                </div>
-
-                <p class="text-xs sm:text-sm italic pt-2" style="color: var(--text-secondary);">
-                    With the divine blessings of Elders & Almighty
-                </p>
-
-                <h1 class="font-serif-regal text-3xl sm:text-5xl font-bold tracking-tight pt-1" style="color: var(--accent-maroon);">
-                    <span id="displayParents">Smt. Ananya & Sri. Karthik Rao</span>
-                </h1>
-
-                <p class="text-sm sm:text-base max-w-lg mx-auto leading-relaxed" style="color: var(--text-secondary);">
-                    Cordially invite you and your family to grace the auspicious <strong class="font-semibold" style="color: var(--text-primary);">Namakarana & Thottilu Shastra</strong> (Cradle & Naming Ceremony) of our beloved <span id="displayBabyGender">Baby Boy</span>.
-                </p>
-            </header>
-
-            <!-- SECTION 1: Interactive Floral & Wooden Cradle (Thottilu) -->
-            <section class="relative my-8 rounded-2xl p-4 sm:p-6 border border-amber-500/30 text-center overflow-hidden" style="background-color: var(--bg-secondary);">
-                <!-- Corner Temple Motifs -->
-                <div class="flex justify-between items-center pointer-events-none opacity-60 mb-1">
-                    <span class="text-amber-600 text-lg">❈</span>
-                    <span class="text-xs uppercase tracking-widest font-semibold text-amber-700">Interactive Blessing</span>
-                    <span class="text-amber-600 text-lg">❈</span>
-                </div>
-
-                <!-- Interactive SVG Thottilu -->
-                <div id="cradleInteractiveArea" class="cursor-pointer select-none mx-auto max-w-md relative group" role="button" tabindex="0" aria-label="Tap to Rock the Cradle and Bless the Baby">
-                    <svg viewBox="0 0 400 285" class="w-full h-auto mx-auto drop-shadow-lg">
-                        <defs>
-                            <linearGradient id="woodGrain" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#78350F"/>
-                                <stop offset="50%" stop-color="#92400E"/>
-                                <stop offset="100%" stop-color="#451A03"/>
-                            </linearGradient>
-                            <linearGradient id="goldRod" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stop-color="#B45309"/>
-                                <stop offset="50%" stop-color="#FDE047"/>
-                                <stop offset="100%" stop-color="#B45309"/>
-                            </linearGradient>
-                            <linearGradient id="silkCushion" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stop-color="#FEF3C7"/>
-                                <stop offset="100%" stop-color="#FDE68A"/>
-                            </linearGradient>
-                        </defs>
-
-                        <!-- Outer Carved Wooden Frame Pillars (Static) -->
-                        <rect x="35" y="255" width="330" height="14" rx="6" fill="url(#woodGrain)"/>
-                        <rect x="25" y="267" width="350" height="8" rx="4" fill="#451A03"/>
-                        <!-- Left Pillar -->
-                        <path d="M55,255 L63,25 L73,25 L81,255 Z" fill="url(#woodGrain)"/>
-                        <circle cx="68" cy="20" r="10" fill="url(#goldRod)"/>
-                        <!-- Right Pillar -->
-                        <path d="M319,255 L327,25 L337,25 L345,255 Z" fill="url(#woodGrain)"/>
-                        <circle cx="332" cy="20" r="10" fill="url(#goldRod)"/>
-                        <!-- Top Crossbar -->
-                        <rect x="52" y="22" width="296" height="10" rx="5" fill="url(#woodGrain)"/>
-                        <rect x="68" y="25" width="264" height="4" fill="url(#goldRod)"/>
-
-                        <!-- Hanging Brass Diyas on Pillars -->
-                        <g transform="translate(42, 65)">
-                            <line x1="8" y1="-40" x2="8" y2="0" stroke="#D4AF37" stroke-width="1.5"/>
-                            <path d="M0,0 Q8,10 16,0 Z" fill="#D4AF37"/>
-                            <path d="M8,-9 Q4,-2 8,0 Q12,-2 8,-9 Z" fill="#F97316" class="flame-flicker"/>
-                        </g>
-                        <g transform="translate(342, 65)">
-                            <line x1="8" y1="-40" x2="8" y2="0" stroke="#D4AF37" stroke-width="1.5"/>
-                            <path d="M0,0 Q8,10 16,0 Z" fill="#D4AF37"/>
-                            <path d="M8,-9 Q4,-2 8,0 Q12,-2 8,-9 Z" fill="#F97316" class="flame-flicker"/>
-                        </g>
-
-                        <!-- SWINGING CRADLE GROUP -->
-                        <g id="cradleSwingGroup" class="cradle-pivot">
-                            <!-- Golden Chains with Jasmine Garlands -->
-                            <line x1="200" y1="27" x2="115" y2="145" stroke="url(#goldRod)" stroke-width="3.5" stroke-dasharray="5 2"/>
-                            <line x1="200" y1="27" x2="285" y2="145" stroke="url(#goldRod)" stroke-width="3.5" stroke-dasharray="5 2"/>
-                            <!-- Floral Vines on Chains -->
-                            <circle cx="158" cy="85" r="6" fill="#F97316"/>
-                            <circle cx="140" cy="110" r="5" fill="#FACC15"/>
-                            <circle cx="242" cy="85" r="6" fill="#F97316"/>
-                            <circle cx="260" cy="110" r="5" fill="#FACC15"/>
-                            <!-- Top Floral Kalasha Knot -->
-                            <circle cx="200" cy="29" r="9" fill="#D4AF37" stroke="#78350F" stroke-width="2"/>
-
-                            <!-- Soft Silk Cushion Inside Cradle -->
-                            <ellipse cx="200" cy="148" rx="78" ry="22" fill="url(#silkCushion)" stroke="#D4AF37" stroke-width="1.5"/>
-                            <!-- Sleeping Baby Silhouette / Blanket -->
-                            <circle cx="165" cy="142" r="12" fill="#FDBA74"/>
-                            <!-- Cute Tilak on forehead -->
-                            <circle cx="168" cy="139" r="1.5" fill="#991B1B"/>
-                            <path d="M160,143 Q163,146 166,143" fill="none" stroke="#7C2D12" stroke-width="1.2" stroke-linecap="round"/>
-                            <path d="M175,148 Q210,132 245,148 Q210,162 175,148 Z" fill="#991B1B" opacity="0.85"/>
-
-                            <!-- Carved Wooden Cradle Basket (Thottilu) -->
-                            <path d="M100,145 L300,145 L278,205 C255,222 145,222 122,205 Z" fill="url(#woodGrain)" stroke="#D4AF37" stroke-width="2.5"/>
-                            
-                            <!-- Golden Zari Pattern on Basket -->
-                            <path d="M110,160 L290,160" stroke="#FDE047" stroke-width="2" stroke-dasharray="6 4"/>
-                            <path d="M118,185 L282,185" stroke="#D4AF37" stroke-width="1.5"/>
-
-                            <!-- Marigold & Jasmine Floral Garland along Cradle Rim -->
-                            <g>
-                                <circle cx="105" cy="146" r="8" fill="#F97316"/>
-                                <circle cx="122" cy="148" r="7" fill="#FACC15"/>
-                                <circle cx="139" cy="149" r="8" fill="#F97316"/>
-                                <circle cx="156" cy="150" r="7" fill="#FFFBEB"/>
-                                <circle cx="173" cy="151" r="8" fill="#F97316"/>
-                                <circle cx="191" cy="151" r="8" fill="#FACC15"/>
-                                <circle cx="209" cy="151" r="8" fill="#F97316"/>
-                                <circle cx="227" cy="151" r="8" fill="#FACC15"/>
-                                <circle cx="244" cy="150" r="7" fill="#FFFBEB"/>
-                                <circle cx="261" cy="149" r="8" fill="#F97316"/>
-                                <circle cx="278" cy="148" r="7" fill="#FACC15"/>
-                                <circle cx="295" cy="146" r="8" fill="#F97316"/>
-                            </g>
-
-                            <!-- Hanging Tassels under Cradle -->
-                            <circle cx="150" cy="218" r="4" fill="#D4AF37"/>
-                            <circle cx="200" cy="222" r="5" fill="#F97316"/>
-                            <circle cx="250" cy="218" r="4" fill="#D4AF37"/>
-                        </g>
-                    </svg>
-
-                    <!-- Interactive Call to Action Badge -->
-                    <div class="mt-2 inline-flex items-center gap-2 px-5 py-2.5 rounded-full shadow-md bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 text-white font-semibold text-xs sm:text-sm group-hover:scale-105 group-active:scale-95 transition-transform">
-                        <span>🌸 Tap to Rock the Cradle & Bless the Baby</span>
-                    </div>
-                </div>
-
-                <!-- Blessing Counter Feedback -->
-                <p id="blessingToast" class="text-xs font-medium mt-3 transition-opacity duration-300" style="color: var(--accent-maroon);">
-                    ✨ <span id="blessingCount">108</span> heartfelt flower blessings showered!
-                </p>
-            </section>
-
-            <!-- SECTION 2: Interactive Scratch-to-Reveal Baby Name Card -->
-            <section class="my-10 text-center">
-                <div class="inline-block mb-2 px-3 py-0.5 rounded-full text-xs font-semibold uppercase tracking-widest border border-amber-500/40" style="color: var(--accent-maroon);">
-                    ✨ The Auspicious Name Reveal ✨
-                </div>
-                <h2 class="font-serif-regal text-2xl sm:text-4xl font-bold mb-2" style="color: var(--text-primary);">
-                    Scratch the Golden Foil to Unveil
-                </h2>
-                <p class="text-xs sm:text-sm mb-5" style="color: var(--text-secondary);">
-                    Rub gently with your finger or cursor (or tap the button below)
-                </p>
-
-                <!-- Scratch Card Container -->
-                <div class="relative mx-auto max-w-md h-56 sm:h-64 rounded-2xl p-1 shadow-xl bg-gradient-to-br from-amber-300 via-yellow-600 to-amber-800 select-none overflow-hidden">
-                    <!-- Hidden Name & Astrological Details Underneath -->
-                    <div class="w-full h-full rounded-xl flex flex-col items-center justify-center p-5 relative" style="background-color: var(--bg-primary);">
-                        <span class="text-xs uppercase tracking-widest font-semibold text-amber-700 mb-1">We proudly name our little prince</span>
-                        <h3 id="displayBabyName" class="font-serif-regal text-4xl sm:text-6xl font-bold gold-gradient-text tracking-wide py-1">
-                            Aarav
-                        </h3>
-                        <p id="displayNameMeaning" class="text-xs italic mb-3" style="color: var(--text-secondary);">
-                            "Peaceful, Melodious & Radiant Wisdom"
-                        </p>
-
-                        <!-- Nakshatra & Rashi Pills -->
-                        <div class="flex flex-wrap justify-center gap-2 text-xs font-medium pt-2 border-t border-amber-500/20 w-full">
-                            <span class="px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30" style="color: var(--text-primary);">
-                                🌟 Nakshatra: <strong id="displayNakshatra">Rohini</strong>
-                            </span>
-                            <span class="px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30" style="color: var(--text-primary);">
-                                🌙 Rashi: <strong id="displayRashi">Vrishabha (Taurus)</strong>
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- HTML5 Scratch Canvas Overlay -->
-                    <canvas id="scratchCanvas" class="absolute inset-1 w-[calc(100%-8px)] h-[calc(100%-8px)] rounded-xl cursor-crosshair touch-none transition-opacity duration-700"></canvas>
-                </div>
-
-                <!-- Fallback Instant Unveil / Reset Controls -->
-                <div class="mt-4 flex items-center justify-center gap-3">
-                    <button id="instantRevealBtn" class="px-4 py-2 rounded-full text-xs font-semibold border border-amber-600/50 hover:bg-amber-500/10 transition" style="color: var(--accent-maroon);">
-                        ✨ Tap to Unveil Instantly
-                    </button>
-                    <button id="resetScratchBtn" class="px-4 py-2 rounded-full text-xs font-medium opacity-75 hover:opacity-100 transition underline" style="color: var(--text-secondary);">
-                        Reset Foil
-                    </button>
-                </div>
-            </section>
-
-            <!-- SECTION 3: Live Countdown Timer to Muhurtham -->
-            <section class="my-10 py-6 px-4 rounded-2xl border border-amber-500/30 text-center" style="background-color: var(--bg-secondary);">
-                <p class="text-xs uppercase tracking-widest font-semibold mb-1" style="color: var(--accent-maroon);">
-                    Counting Down to the Shubha Muhurtham
-                </p>
-                <p id="displayFullDateBanner" class="font-serif-regal text-lg sm:text-xl font-semibold mb-4" style="color: var(--text-primary);">
-                    Sunday, December 6, 2026 • 10:30 AM IST
-                </p>
-
-                <div class="grid grid-cols-4 gap-2 sm:gap-4 max-w-md mx-auto">
-                    <div class="p-3 rounded-xl border border-amber-500/40 shadow-sm" style="background-color: var(--bg-card);">
-                        <div id="cdDays" class="font-serif-regal text-2xl sm:text-4xl font-bold" style="color: var(--accent-maroon);">28</div>
-                        <div class="text-[10px] sm:text-xs uppercase tracking-wider mt-1" style="color: var(--text-secondary);">Days</div>
-                    </div>
-                    <div class="p-3 rounded-xl border border-amber-500/40 shadow-sm" style="background-color: var(--bg-card);">
-                        <div id="cdHours" class="font-serif-regal text-2xl sm:text-4xl font-bold" style="color: var(--accent-maroon);">18</div>
-                        <div class="text-[10px] sm:text-xs uppercase tracking-wider mt-1" style="color: var(--text-secondary);">Hours</div>
-                    </div>
-                    <div class="p-3 rounded-xl border border-amber-500/40 shadow-sm" style="background-color: var(--bg-card);">
-                        <div id="cdMins" class="font-serif-regal text-2xl sm:text-4xl font-bold" style="color: var(--accent-maroon);">45</div>
-                        <div class="text-[10px] sm:text-xs uppercase tracking-wider mt-1" style="color: var(--text-secondary);">Mins</div>
-                    </div>
-                    <div class="p-3 rounded-xl border border-amber-500/40 shadow-sm" style="background-color: var(--bg-card);">
-                        <div id="cdSecs" class="font-serif-regal text-2xl sm:text-4xl font-bold" style="color: var(--accent-maroon);">12</div>
-                        <div class="text-[10px] sm:text-xs uppercase tracking-wider mt-1" style="color: var(--text-secondary);">Secs</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECTION 4: Event Schedule & Venue Details -->
-            <section class="my-10 space-y-6">
-                <div class="text-center">
-                    <span class="text-xs uppercase tracking-widest font-semibold" style="color: var(--accent-maroon);">Sacred Rituals</span>
-                    <h2 class="font-serif-regal text-2xl sm:text-4xl font-bold" style="color: var(--text-primary);">Ceremony Itinerary</h2>
-                </div>
-
-                <!-- 3-Column Ritual Cards -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <!-- Event 1: Thottilu Puja -->
-                    <div class="p-5 rounded-2xl border border-amber-500/30 flex flex-col items-center text-center shadow-sm hover:shadow-md transition" style="background-color: var(--bg-secondary);">
-                        <div class="w-12 h-12 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-2xl mb-3">
-                            🪔
-                        </div>
-                        <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-500/15 mb-2" style="color: var(--accent-maroon);">09:45 AM</span>
-                        <h3 class="font-serif-regal text-xl font-bold mb-1">Punyahavachana & Thottilu Puja</h3>
-                        <p class="text-xs leading-relaxed" style="color: var(--text-secondary);">
-                            Sanctification rituals, Kalasha Puja, and decorating the traditional cradle by elders.
-                        </p>
-                    </div>
-
-                    <!-- Event 2: Naming Muhurtham -->
-                    <div class="p-5 rounded-2xl border-2 border-amber-500 flex flex-col items-center text-center shadow-md relative" style="background-color: var(--bg-secondary);">
-                        <span class="absolute -top-2.5 px-3 py-0.5 rounded-full bg-amber-600 text-white text-[10px] font-bold uppercase tracking-widest">Main Muhurtham</span>
-                        <div class="w-12 h-12 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-2xl mb-3 mt-1">
-                            🐚
-                        </div>
-                        <span id="displayMuhurthamTimePill" class="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-500/15 mb-2" style="color: var(--accent-maroon);">10:30 AM</span>
-                        <h3 class="font-serif-regal text-xl font-bold mb-1">Namakarana Shastra</h3>
-                        <p class="text-xs leading-relaxed" style="color: var(--text-secondary);">
-                            Whispering the sacred name into the baby's right ear with a golden betel leaf & placing in the cradle.
-                        </p>
-                    </div>
-
-                    <!-- Event 3: Banana Leaf Feast -->
-                    <div class="p-5 rounded-2xl border border-amber-500/30 flex flex-col items-center text-center shadow-sm hover:shadow-md transition" style="background-color: var(--bg-secondary);">
-                        <div class="w-12 h-12 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-2xl mb-3">
-                            🍃
-                        </div>
-                        <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-500/15 mb-2" style="color: var(--accent-maroon);">12:15 PM Onwards</span>
-                        <h3 class="font-serif-regal text-xl font-bold mb-1">Traditional Banana Leaf Lunch</h3>
-                        <p class="text-xs leading-relaxed" style="color: var(--text-secondary);">
-                            Authentic South Indian festive *Bale Ele Oota* with Holige, Payasa, and seasonal delicacies.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Venue Card with Google Maps Direction Button -->
-                <div class="p-6 rounded-2xl border border-amber-500/40 flex flex-col sm:flex-row items-center justify-between gap-5" style="background-color: var(--bg-secondary);">
-                    <div class="text-center sm:text-left space-y-1">
-                        <div class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider" style="color: var(--accent-maroon);">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Ceremony Venue</span>
-                        </div>
-                        <h3 id="displayVenueName" class="font-serif-regal text-2xl font-bold" style="color: var(--text-primary);">
-                            The Tamarind Tree Heritage Mandapa
-                        </h3>
-                        <p id="displayVenueAddress" class="text-xs sm:text-sm" style="color: var(--text-secondary);">
-                            88, Avalahalli, Kanakapura Main Road, JP Nagar Phase 9, Bengaluru - 560062
-                        </p>
-                    </div>
-
-                    <a id="directionsLink" href="https://www.google.com/maps/search/?api=1&query=The+Tamarind+Tree+Bengaluru" target="_blank" rel="noopener noreferrer" class="shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-xs sm:text-sm shadow-md bg-gradient-to-r from-red-900 to-amber-800 text-amber-50 hover:opacity-95 transition">
-                        <svg class="w-4 h-4 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-                        </svg>
-                        <span>Get Directions</span>
-                    </a>
-                </div>
-            </section>
-
-            <!-- Traditional Sign-off -->
-            <div class="text-center pt-4 pb-2 space-y-1">
-                <p class="font-serif-regal italic text-lg" style="color: var(--text-secondary);">
-                    Awaiting the pleasure of your auspicious presence,
-                </p>
-                <p class="font-serif-regal text-xl font-bold" style="color: var(--accent-maroon);">
-                    Rao & Sharma Parivar
-                </p>
-            </div>
-
-        </div>
-
-        <!-- SECTION 7: Footer with Required Copyright & Promotional WhatsApp Link -->
-        <footer class="mt-10 text-center space-y-4 px-4">
-            <div class="inline-flex flex-col sm:flex-row items-center gap-3 p-4 rounded-2xl border border-amber-500/40 shadow-md" style="background-color: var(--bg-card);">
-                <span class="text-xs sm:text-sm font-medium" style="color: var(--text-primary);">
-                    ✨ For similar custom web invitations, contact on WhatsApp:
-                </span>
-                <a href="https://wa.me/918095117035?text=Hi!%20I%20loved%20the%20Namakarana%20digital%20web%20invitation%20and%20would%20like%20to%20inquire%20about%20a%20custom%20invitation." target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-white bg-gradient-to-r from-amber-600 to-red-800 hover:scale-105 transition shadow">
-                    <span>📱 8095117035</span>
-                </a>
-            </div>
-
-            <p class="text-xs opacity-75" style="color: var(--text-secondary);">
-                © The Next-Gen Group. All rights reserved.
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        <!-- Header -->
+        <header class="text-center mb-8 border-b border-amber-500/30 pb-4">
+            <h1 class="text-3xl sm:text-4xl font-bold font-cinzel text-amber-400 tracking-wide">
+                🌸 Karnataka Namakarana Card Builder
+            </h1>
+            <p class="text-slate-300 text-sm sm:text-base mt-2">
+                Customize traditional Kannada style cradle ceremony invitations and download high-quality images or PDFs.
             </p>
-        </footer>
-    </main>
+        </header>
 
-    <!-- Interactive JavaScript for Chimes, Cradle Rocking, Petal Shower, Scratch Foil & Countdown -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <!-- Left Side: Controls & Editor -->
+            <div class="lg:col-span-5 bg-slate-800/90 border border-slate-700 rounded-xl p-5 shadow-2xl space-y-5 max-h-[85vh] overflow-y-auto">
+                <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+                    <h2 class="text-lg font-semibold text-amber-300 flex items-center gap-2">
+                        <span>✏️</span> Edit Details
+                    </h2>
+                    <span class="text-xs text-slate-400">Live Preview Updates Below</span>
+                </div>
+
+                <!-- Theme Selection -->
+                <div>
+                    <label class="block text-xs font-semibold text-amber-200 uppercase mb-2">Card Theme Palette</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="setTheme('royal-maroon')" class="p-2 rounded border border-amber-500/40 bg-[#5c0612] text-xs font-medium text-amber-200 hover:brightness-125 transition">Royal Maroon</button>
+                        <button onclick="setTheme('deep-purple')" class="p-2 rounded border border-amber-500/40 bg-[#3b0764] text-xs font-medium text-amber-200 hover:brightness-125 transition">Traditional Silk</button>
+                        <button onclick="setTheme('emerald-green')" class="p-2 rounded border border-amber-500/40 bg-[#064e3b] text-xs font-medium text-amber-200 hover:brightness-125 transition">Grand Emerald</button>
+                    </div>
+                </div>
+
+                <!-- Invocation / Header -->
+                <div class="space-y-3">
+                    <label class="block text-xs font-semibold text-amber-200 uppercase">1. Religious Invocation</label>
+                    <div>
+                        <span class="text-xs text-slate-400">Kannada Mantra Header</span>
+                        <input type="text" id="in-kannada-header" value="ಶ್ರೀ ಗಣೇಶಾಯ ನಮಃ" oninput="updateCard()" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-sm text-amber-300 focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400">English Sub-Header</span>
+                        <input type="text" id="in-english-header" value="|| Shri Ganeshay Namah ||" oninput="updateCard()" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+
+                <!-- Parents & Baby Info -->
+                <div class="space-y-3 border-t border-slate-700/60 pt-3">
+                    <label class="block text-xs font-semibold text-amber-200 uppercase">2. Family & Baby Details</label>
+                    <div>
+                        <span class="text-xs text-slate-400">Title / Headline</span>
+                        <input type="text" id="in-headline" value="Namakarana & Thottilu Puja Invitation" oninput="updateCard()" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400">Invitation Phrase</span>
+                        <input type="text" id="in-invitation-phrase" value="With the divine blessings of Almighty & Our Elders, we cordially invite you to the Naming & Cradle Ceremony of our precious baby." oninput="updateCard()" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <span class="text-xs text-slate-400">Mother's Name</span>
+                            <input type="text" id="in-mother" value="Sowmya" oninput="updateCard()" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-amber-500">
+                        </div>
+                        <div>
+                            <span class="text-xs text-slate-400">Father's Name</span>
+                            <input type="text" id="in-father" value="Raghavendra" oninput="updateCard()" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-amber-500">
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400">Grandparents' Names</span>
+                        <input type="text" id="in-grandparents" value="Smt. & Sri Subba Rao | Smt. & Sri Sharadamma" oninput="updateCard()" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+
+                <!-- Event Logistics -->
+                <div class="space-y-3 border-t border-slate-700/60 pt-3">
+                    <label class="block text-xs font-semibold text-amber-200 uppercase">3. Date, Time & Venue</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <span class="text-xs text-slate-400">Event Date</span>
+                            <input type="text" id="in-date" value="Sunday, 13th Dec 2026" oninput="updateCard()" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-amber-500">
+                        </div>
+                        <div>
+                            <span class="text-xs text-slate-400">Auspicious Muhurtha</span>
+                            <input type="text" id="in-muhurtha" value="10:30 AM onwards" oninput="updateCard()" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-amber-500">
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400">Feast (Oota) Details</span>
+                        <input type="text" id="in-lunch" value="Traditional Kannada Lunch: 12:30 PM Onwards" oninput="updateCard()" class="w-full bg-slate-900 border border-slate-900 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400">Venue Name & Address</span>
+                        <textarea id="in-venue" rows="2" oninput="updateCard()" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-amber-500">Sri Rama Mandira Sabha Bhavana, Near Swamy Mutt, 4th Block, Jayanagar, Bengaluru</textarea>
+                    </div>
+                </div>
+
+                <!-- Quotes & RSVP -->
+                <div class="space-y-3 border-t border-slate-700/60 pt-3">
+                    <label class="block text-xs font-semibold text-amber-200 uppercase">4. Traditional Quote & Host</label>
+                    <div>
+                        <span class="text-xs text-slate-400">Kannada / English Quote</span>
+                        <input type="text" id="in-quote" value="“ಮನೆಯ ಬೆಳಕು, ನಮ್ಮ ಪ್ರೀತಿಯ ಮಗಳು” — A tiny hand to hold, a lifetime of love to unfold." oninput="updateCard()" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400">Best Compliments / RSVP</span>
+                        <input type="text" id="in-rsvp" value="Warmly Awaited By: Friends & Family | Contact: +91 98765 43210" oninput="updateCard()" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Real-time Interactive Preview & Download -->
+            <div class="lg:col-span-7 flex flex-col items-center">
+                
+                <!-- Action Buttons -->
+                <div class="w-full flex flex-wrap gap-3 justify-center mb-4">
+                    <button onclick="downloadPNG()" class="px-5 py-2.5 gold-accent-bg text-slate-950 font-bold rounded-lg shadow-lg hover:brightness-110 transition flex items-center gap-2 text-sm">
+                        <span>📥</span> Download Image (PNG)
+                    </button>
+                    <button onclick="downloadPDF()" class="px-5 py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg shadow-lg transition flex items-center gap-2 text-sm">
+                        <span>📄</span> Download Printable PDF
+                    </button>
+                </div>
+
+                <!-- Canvas Wrapper for Preview -->
+                <div class="w-full flex justify-center overflow-x-auto p-2">
+                    <div id="card-preview" class="w-[450px] min-h-[640px] bg-[#5c0612] text-amber-100 p-6 relative rounded-lg shadow-2xl flex flex-col justify-between border-4 border-amber-400/80 gold-border transition-colors duration-300">
+                        
+                        <!-- Traditional Corner Motifs -->
+                        <div class="absolute top-2 left-2 text-amber-400 text-xl select-none">⚜️</div>
+                        <div class="absolute top-2 right-2 text-amber-400 text-xl select-none">⚜️</div>
+                        <div class="absolute bottom-2 left-2 text-amber-400 text-xl select-none">⚜️</div>
+                        <div class="absolute bottom-2 right-2 text-amber-400 text-xl select-none">⚜️</div>
+
+                        <!-- Top Invocation Section -->
+                        <div class="text-center pt-3">
+                            <p id="out-kannada-header" class="font-kannada text-xl font-bold text-amber-300 tracking-wider">
+                                ಶ್ರೀ ಗಣೇಶಾಯ ನಮಃ
+                            </p>
+                            <p id="out-english-header" class="font-cinzel text-xs text-amber-200/90 tracking-widest uppercase mt-0.5">
+                                || Shri Ganeshay Namah ||
+                            </p>
+                            <div class="w-24 h-0.5 gold-accent-bg mx-auto my-3 rounded-full"></div>
+                        </div>
+
+                        <!-- Center Invitation Details -->
+                        <div class="text-center space-y-3 py-2">
+                            <h2 id="out-headline" class="font-cinzel text-lg font-bold text-amber-300 tracking-wide">
+                                Namakarana & Thottilu Puja Invitation
+                            </h2>
+                            <p id="out-invitation-phrase" class="text-xs text-amber-100/90 italic px-4 font-serif-title leading-relaxed">
+                                With the divine blessings of Almighty & Our Elders, we cordially invite you to the Naming & Cradle Ceremony of our precious baby.
+                            </p>
+
+                            <!-- Cradle Motif/Symbol -->
+                            <div class="my-2">
+                                <span class="text-3xl">👶🪔</span>
+                            </div>
+
+                            <div class="bg-black/30 border border-amber-500/30 rounded-lg p-3 mx-2 space-y-1.5">
+                                <p class="text-xs uppercase tracking-wider text-amber-300/80 font-cinzel">Joyfully Invited By</p>
+                                <p class="text-base font-bold text-amber-200 font-serif-title">
+                                    <span id="out-mother">Sowmya</span> & <span id="out-father">Raghavendra</span>
+                                </p>
+                                <p class="text-[11px] text-amber-100/75 italic">
+                                    Grandchild of: <span id="out-grandparents">Smt. & Sri Subba Rao | Smt. & Sri Sharadamma</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Event Logistics -->
+                        <div class="my-2 border-y border-amber-500/30 py-3 px-2 text-center space-y-2 bg-amber-950/20 rounded">
+                            <div class="flex justify-center items-center gap-4 text-xs font-medium text-amber-200">
+                                <div>
+                                    <span class="block text-[10px] text-amber-400 font-cinzel uppercase">Date</span>
+                                    <span id="out-date" class="font-semibold">Sunday, 13th Dec 2026</span>
+                                </div>
+                                <div class="h-6 w-px bg-amber-500/40"></div>
+                                <div>
+                                    <span class="block text-[10px] text-amber-400 font-cinzel uppercase">Muhurtha</span>
+                                    <span id="out-muhurtha" class="font-semibold">10:30 AM onwards</span>
+                                </div>
+                            </div>
+                            <p id="out-lunch" class="text-[11px] text-amber-300 font-medium pt-1">
+                                Traditional Kannada Lunch: 12:30 PM Onwards
+                            </p>
+                        </div>
+
+                        <!-- Venue -->
+                        <div class="text-center space-y-1 px-2">
+                            <p class="text-[10px] uppercase font-cinzel text-amber-400 tracking-wider">Venue</p>
+                            <p id="out-venue" class="text-xs text-amber-100 font-medium leading-relaxed">
+                                Sri Rama Mandira Sabha Bhavana, Near Swamy Mutt, 4th Block, Jayanagar, Bengaluru
+                            </p>
+                        </div>
+
+                        <!-- Bottom Quote & RSVP -->
+                        <div class="text-center pt-3 pb-2 border-t border-amber-500/20 mt-2 space-y-2">
+                            <p id="out-quote" class="text-[11px] font-kannada text-amber-200/90 italic">
+                                “ಮನೆಯ ಬೆಳಕು, ನಮ್ಮ ಪ್ರೀತಿಯ ಮಗಳು” — A tiny hand to hold, a lifetime of love to unfold.
+                            </p>
+                            <p id="out-rsvp" class="text-[10px] text-amber-300/80 font-cinzel uppercase tracking-wider">
+                                Warmly Awaited By: Friends & Family | Contact: +91 98765 43210
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <script>
-        window.onload = function () {
-            /* ============================================================
-               1. TONE.JS TEMPLE CHIME & SOUND SYNTHESIS
-               ============================================================ */
-            let soundEnabled = true;
-            let synthReady = false;
-            let bellSynth = null;
+        // Real-time update function
+        function updateCard() {
+            document.getElementById('out-kannada-header').innerText = document.getElementById('in-kannada-header').value;
+            document.getElementById('out-english-header').innerText = document.getElementById('in-english-header').value;
+            document.getElementById('out-headline').innerText = document.getElementById('in-headline').value;
+            document.getElementById('out-invitation-phrase').innerText = document.getElementById('in-invitation-phrase').value;
+            document.getElementById('out-mother').innerText = document.getElementById('in-mother').value;
+            document.getElementById('out-father').innerText = document.getElementById('in-father').value;
+            document.getElementById('out-grandparents').innerText = document.getElementById('in-grandparents').value;
+            document.getElementById('out-date').innerText = document.getElementById('in-date').value;
+            document.getElementById('out-muhurtha').innerText = document.getElementById('in-muhurtha').value;
+            document.getElementById('out-lunch').innerText = document.getElementById('in-lunch').value;
+            document.getElementById('out-venue').innerText = document.getElementById('in-venue').value;
+            document.getElementById('out-quote').innerText = document.getElementById('in-quote').value;
+            document.getElementById('out-rsvp').innerText = document.getElementById('in-rsvp').value;
+        }
 
-            const soundToggleBtn = document.getElementById('soundToggleBtn');
-            const soundOnIcon = document.getElementById('soundOnIcon');
-            const soundOffIcon = document.getElementById('soundOffIcon');
-
-            async function ensureAudioInitialized() {
-                if (!soundEnabled) return false;
-                try {
-                    if (typeof Tone !== 'undefined') {
-                        await Tone.start();
-                        if (!synthReady) {
-                            bellSynth = new Tone.PolySynth(Tone.Synth, {
-                                oscillator: { type: 'sine' },
-                                envelope: {
-                                    attack: 0.008,
-                                    decay: 1.4,
-                                    sustain: 0.05,
-                                    release: 2.2
-                                }
-                            }).toDestination();
-                            bellSynth.volume.value = -10;
-                            synthReady = true;
-                        }
-                        return true;
-                    }
-                } catch (err) {
-                    console.warn('Audio init skipped:', err);
-                }
-                return false;
+        // Color Themes Switcher
+        function setTheme(theme) {
+            const card = document.getElementById('card-preview');
+            if (theme === 'royal-maroon') {
+                card.style.backgroundColor = '#5c0612';
+            } else if (theme === 'deep-purple') {
+                card.style.backgroundColor = '#3b0764';
+            } else if (theme === 'emerald-green') {
+                card.style.backgroundColor = '#064e3b';
             }
+        }
 
-            async function playAuspiciousChime(type = 'cradle') {
-                if (!soundEnabled) return;
-                const ready = await ensureAudioInitialized();
-                if (!ready || !bellSynth) return;
-
-                const now = Tone.now();
-                if (type === 'reveal') {
-                    // Ascending Hamsadhwani / Mohanam celebratory arpeggio
-                    const notes = ['D5', 'E5', 'F#5', 'A5', 'B5', 'D6'];
-                    notes.forEach((n, i) => {
-                        bellSynth.triggerAttackRelease(n, '8n', now + i * 0.11);
-                    });
-                } else {
-                    // Gentle temple bell chord
-                    bellSynth.triggerAttackRelease(['D5', 'A5', 'D6'], '4n', now);
-                }
-            }
-
-            soundToggleBtn.addEventListener('click', () => {
-                soundEnabled = !soundEnabled;
-                soundOnIcon.classList.toggle('hidden', !soundEnabled);
-                soundOffIcon.classList.toggle('hidden', soundEnabled);
-                if (soundEnabled) {
-                    playAuspiciousChime('cradle');
-                }
+        // Download PNG Image
+        function downloadPNG() {
+            const card = document.getElementById('card-preview');
+            html2canvas(card, {
+                scale: 3, // High resolution
+                useCORS: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'Namakarana-Invitation-Card.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
             });
+        }
 
-            /* ============================================================
-               2. FLOATING MARIGOLD & JASMINE PETAL CANVAS
-               ============================================================ */
-            const petalCanvas = document.getElementById('petalCanvas');
-            const pCtx = petalCanvas.getContext('2d');
-            let petals = [];
+        // Download PDF
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const card = document.getElementById('card-preview');
 
-            function resizePetalCanvas() {
-                petalCanvas.width = window.innerWidth;
-                petalCanvas.height = window.innerHeight;
-            }
-            resizePetalCanvas();
-            window.addEventListener('resize', resizePetalCanvas);
-
-            const petalColors = ['#F97316', '#FACC15', '#FB923C', '#FEF08A', '#FDE047', '#FFFBEB'];
-
-            function spawnPetals(count = 28) {
-                for (let i = 0; i < count; i++) {
-                    petals.push({
-                        x: Math.random() * petalCanvas.width,
-                        y: -20 - Math.random() * 80,
-                        r: 5 + Math.random() * 6,
-                        color: petalColors[Math.floor(Math.random() * petalColors.length)],
-                        vx: -1.2 + Math.random() * 2.4,
-                        vy: 1.8 + Math.random() * 2.6,
-                        angle: Math.random() * Math.PI * 2,
-                        spin: -0.04 + Math.random() * 0.08,
-                        opacity: 0.92
-                    });
-                }
-            }
-
-            function animatePetals() {
-                pCtx.clearRect(0, 0, petalCanvas.width, petalCanvas.height);
-                for (let i = petals.length - 1; i >= 0; i--) {
-                    const p = petals[i];
-                    p.x += p.vx + Math.sin(p.angle) * 0.5;
-                    p.y += p.vy;
-                    p.angle += p.spin;
-
-                    pCtx.save();
-                    pCtx.translate(p.x, p.y);
-                    pCtx.rotate(p.angle);
-                    pCtx.fillStyle = p.color;
-                    pCtx.globalAlpha = p.opacity;
-                    pCtx.beginPath();
-                    pCtx.ellipse(0, 0, p.r, p.r * 0.6, 0, 0, Math.PI * 2);
-                    pCtx.fill();
-                    pCtx.restore();
-
-                    if (p.y > petalCanvas.height + 30) {
-                        petals.splice(i, 1);
-                    }
-                }
-                requestAnimationFrame(animatePetals);
-            }
-            animatePetals();
-
-            /* ============================================================
-               3. INTERACTIVE CRADLE (THOTTILU) ROCKING & BLESSING COUNTER
-               ============================================================ */
-            const cradleInteractiveArea = document.getElementById('cradleInteractiveArea');
-            const cradleSwingGroup = document.getElementById('cradleSwingGroup');
-            const blessingCountEl = document.getElementById('blessingCount');
-            let blessingCount = 108;
-
-            function triggerCradleBlessing() {
-                cradleSwingGroup.classList.remove('cradle-rocking');
-                void cradleSwingGroup.offsetWidth;
-                cradleSwingGroup.classList.add('cradle-rocking');
-
-                blessingCount += 1;
-                blessingCountEl.textContent = blessingCount;
-
-                spawnPetals(32);
-                playAuspiciousChime('cradle');
-
-                setTimeout(() => {
-                    cradleSwingGroup.classList.remove('cradle-rocking');
-                }, 2400);
-            }
-
-            cradleInteractiveArea.addEventListener('click', triggerCradleBlessing);
-            cradleInteractiveArea.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    triggerCradleBlessing();
-                }
+            html2canvas(card, { scale: 3, useCORS: true }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a5');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save('Namakarana-Invitation-Card.pdf');
             });
-
-            /* ============================================================
-               4. GOLDEN FOIL SCRATCH-TO-REVEAL CANVAS
-               ============================================================ */
-            const scratchCanvas = document.getElementById('scratchCanvas');
-            const sCtx = scratchCanvas.getContext('2d');
-            const instantRevealBtn = document.getElementById('instantRevealBtn');
-            const resetScratchBtn = document.getElementById('resetScratchBtn');
-            let isDrawing = false;
-            let isRevealed = false;
-
-            function initScratchFoil() {
-                const rect = scratchCanvas.getBoundingClientRect();
-                scratchCanvas.width = rect.width || 420;
-                scratchCanvas.height = rect.height || 230;
-
-                isRevealed = false;
-                scratchCanvas.style.opacity = '1';
-                scratchCanvas.style.pointerEvents = 'auto';
-
-                sCtx.globalCompositeOperation = 'source-over';
-
-                // Rich Metallic Gold Foil Gradient
-                const grad = sCtx.createLinearGradient(0, 0, scratchCanvas.width, scratchCanvas.height);
-                grad.addColorStop(0, '#B45309');
-                grad.addColorStop(0.25, '#FDE047');
-                grad.addColorStop(0.5, '#D97706');
-                grad.addColorStop(0.75, '#FEF08A');
-                grad.addColorStop(1, '#92400E');
-                sCtx.fillStyle = grad;
-                sCtx.fillRect(0, 0, scratchCanvas.width, scratchCanvas.height);
-
-                // Subtle ornamental border inside foil
-                sCtx.strokeStyle = 'rgba(255, 251, 235, 0.65)';
-                sCtx.lineWidth = 2;
-                sCtx.strokeRect(12, 12, scratchCanvas.width - 24, scratchCanvas.height - 24);
-
-                // Foil Prompt Text
-                sCtx.fillStyle = '#451A03';
-                sCtx.font = 'bold 20px "Cormorant Garamond", serif';
-                sCtx.textAlign = 'center';
-                sCtx.fillText('✨ RUB HERE TO REVEAL THE BABY NAME ✨', scratchCanvas.width / 2, scratchCanvas.height / 2 - 4);
-
-                sCtx.font = '500 12px "Plus Jakarta Sans", sans-serif';
-                sCtx.fillText('Scratch gently with finger or mouse', scratchCanvas.width / 2, scratchCanvas.height / 2 + 22);
-            }
-
-            function getScratchPos(e) {
-                const rect = scratchCanvas.getBoundingClientRect();
-                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                return {
-                    x: clientX - rect.left,
-                    y: clientY - rect.top
-                };
-            }
-
-            function scratchAt(e) {
-                if (!isDrawing || isRevealed) return;
-                const pos = getScratchPos(e);
-                sCtx.globalCompositeOperation = 'destination-out';
-                sCtx.beginPath();
-                sCtx.arc(pos.x, pos.y, 26, 0, Math.PI * 2);
-                sCtx.fill();
-                checkScratchCompletion();
-            }
-
-            function checkScratchCompletion() {
-                if (isRevealed) return;
-                try {
-                    const imgData = sCtx.getImageData(0, 0, scratchCanvas.width, scratchCanvas.height).data;
-                    let transparentPixels = 0;
-                    const totalPixels = imgData.length / 4;
-                    for (let i = 3; i < imgData.length; i += 16) {
-                        if (imgData[i] < 128) transparentPixels++;
-                    }
-                    const clearedRatio = transparentPixels / (totalPixels / 4);
-                    if (clearedRatio > 0.42) {
-                        completeNameReveal();
-                    }
-                } catch (err) {}
-            }
-
-            function completeNameReveal() {
-                if (isRevealed) return;
-                isRevealed = true;
-                scratchCanvas.style.opacity = '0';
-                scratchCanvas.style.pointerEvents = 'none';
-                spawnPetals(45);
-                playAuspiciousChime('reveal');
-            }
-
-            scratchCanvas.addEventListener('mousedown', (e) => { isDrawing = true; scratchAt(e); });
-            window.addEventListener('mousemove', scratchAt);
-            window.addEventListener('mouseup', () => { isDrawing = false; });
-
-            scratchCanvas.addEventListener('touchstart', (e) => {
-                isDrawing = true;
-                scratchAt(e);
-            }, { passive: true });
-            scratchCanvas.addEventListener('touchmove', (e) => {
-                if (isDrawing) {
-                    e.preventDefault();
-                    scratchAt(e);
-                }
-            }, { passive: false });
-            scratchCanvas.addEventListener('touchend', () => { isDrawing = false; });
-
-            instantRevealBtn.addEventListener('click', completeNameReveal);
-            resetScratchBtn.addEventListener('click', initScratchFoil);
-
-            initScratchFoil();
-
-            /* ============================================================
-               5. LIVE COUNTDOWN TIMER TO MUHURTHAM
-               ============================================================ */
-            const targetDate = new Date('2026-12-06T10:30:00+05:30').getTime();
-            const cdDays = document.getElementById('cdDays');
-            const cdHours = document.getElementById('cdHours');
-            const cdMins = document.getElementById('cdMins');
-            const cdSecs = document.getElementById('cdSecs');
-
-            function updateCountdown() {
-                const now = Date.now();
-                const diff = Math.max(0, targetDate - now);
-
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-                const mins = Math.floor((diff / 1000 / 60) % 60);
-                const secs = Math.floor((diff / 1000) % 60);
-
-                cdDays.textContent = String(days).padStart(2, '0');
-                cdHours.textContent = String(hours).padStart(2, '0');
-                cdMins.textContent = String(mins).padStart(2, '0');
-                cdSecs.textContent = String(secs).padStart(2, '0');
-            }
-            updateCountdown();
-            setInterval(updateCountdown, 1000);
-
-            // Initial welcome flower shower
-            setTimeout(() => spawnPetals(20), 400);
-        };
+        }
     </script>
 </body>
 </html>
